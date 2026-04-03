@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>The Smile App v3.0 | Jai-Verse</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  
+  <style>
+    /* Critical custom CSS for the matrix fade & animations */
+    .fade-out { opacity: 0; transition: opacity 1s ease-out; }
+    
+    @keyframes pulse-height {
+        0%, 100% { transform: scaleY(0.5); opacity: 0.7; }
+        50% { transform: scaleY(1.2); opacity: 1; }
+    }
+    .wave-active .wave-bar {
+        animation: pulse-height 0.8s infinite ease-in-out;
+    }
+    .wave-active .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+    .wave-active .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+    .wave-active .wave-bar:nth-child(4) { animation-delay: 0.3s; }
+    .wave-active .wave-bar:nth-child(5) { animation-delay: 0.4s; }
+
+    /* THE BONE MARROW TEXTURE SKIN */
+    .bone-texture {
+        background-color: #F9F6EE;
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+        border-bottom: 2px solid rgba(0,0,0,0.1);
+    }
+
+    /* Listening Pulse Animation */
+    @keyframes listening-pulse {
+        0% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.7); }
+        70% { box-shadow: 0 0 0 20px rgba(168, 85, 247, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0); }
+    }
+    .is-listening {
+        animation: listening-pulse 1.5s infinite;
+        border-color: #a855f7 !important;
+    }
+
+    /* Animation: KITT Wave Pulse */
+    @keyframes wave-pulse {
+      0%, 100% { transform: scaleY(1); opacity: 0.6; }
+      50% { transform: scaleY(1.8); opacity: 1; }
+    }
+
+    .wave-bar { animation: wave-pulse 1s infinite ease-in-out; }
+    .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+    .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+    .wave-bar:nth-child(4) { animation-delay: 0.3s; }
+    .wave-bar:nth-child(5) { animation-delay: 0.4s; }
+
+    /* Eliminate Mobile Sticky Hovers */
+    @media (hover: hover) {
+      #camera-btn:hover img { border-color: #10b981; transform: scale(1.1); }
+      #lucky-btn:hover img { border-color: #3b82f6; transform: scale(1.05); }
+      #maestro-btn:hover img { border-color: #a855f7; transform: scale(1.1); }
+      .mode-btn:hover { background-color: #374151; color: white; }
+    }
+
+    /* Global Smoothness */
+    html {
+      -webkit-tap-highlight-color: transparent;
+      scroll-behavior: smooth;
+      background-color: #0f111a;
+    }
+
+    .hidden { display: none !important; }
+    .fade-out { opacity: 0; pointer-events: none; }
+    #matrixCanvas { pointer-events: none; }
+
+    /* Neon Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0f111a; }
+    ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #d946ef; }
+
+    /* Cinematic Outro */
+    #outroScreen {
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), 
+                    linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
+        background-size: 100% 3px, 3px 100%;
+    }
+
+    #outroVisual {
+        max-width: 90%;
+        max-height: 60vh;
+        border-radius: 15px;
+        border: 2px solid #58a6ff;
+        box-shadow: 0 0 20px rgba(88, 166, 255, 0.5), 0 0 40px rgba(88, 166, 255, 0.2);
+        animation: holo-glow 3s infinite alternate;
+    }
+
+    @keyframes holo-glow {
+        from { box-shadow: 0 0 15px #58a6ff, 0 0 20px #58a6ff inset; }
+        to { box-shadow: 0 0 40px #58a6ff, 0 0 10px #58a6ff inset; opacity: 0.95; }
+    }
+
+    #outroText { text-shadow: 0 0 15px #58a6ff; }
+  </style>
+</head>
+<body class="min-h-screen text-white font-sans flex flex-col items-center bg-[#0f111a] relative overflow-hidden" id="bodyContainer">
+
+  <!-- MATRIX RAIN OVERLAY -->
+  <canvas id="matrixCanvas" class="fixed inset-0 z-50 w-full h-full transition-opacity duration-1000"></canvas>
+
+  <!-- MAIN APPLICATION UI -->
+  <div id="mainApp" class="hidden relative z-10 w-full flex flex-col items-center h-full overflow-y-auto pb-20">
+      
+      <!-- Top Action Bar -->
+      <div class="bone-texture w-full flex justify-center items-center gap-6 md:gap-10 py-8 shadow-xl mb-8 relative">
+        <button id="camera-btn" class="focus:outline-none transition-transform active:scale-95" title="Harmonic Vision">
+            <img src="https://thesmileappvalt.wordpress.com/wp-content/uploads/2026/03/20d1385a-9067-414c-91c1-1d229c4ca4c5.png" 
+                 class="w-24 h-24 md:w-28 md:h-28 rounded-full shadow-lg border-2 border-transparent transition-all hover:border-emerald-500 hover:scale-110" 
+                 alt="Harmonic Vision">
+        </button>
+
+        <button id="lucky-btn" class="focus:outline-none transition-transform active:scale-95 z-10" title="Feeling Lucky">
+            <img src="https://thesmileappvalt.wordpress.com/wp-content/uploads/2026/03/99952c5c-09f8-4ffe-90ab-43ac5ffa0ad3.png" 
+                 class="w-36 h-36 md:w-44 md:h-44 rounded-full shadow-2xl border-4 border-transparent transition-all hover:border-blue-500 hover:scale-105" 
+                 alt="Feeling Lucky">
+        </button>
+
+        <button id="maestro-btn" class="focus:outline-none transition-transform active:scale-95 rounded-full" title="The Maestro's Ear">
+            <img src="https://thesmileappvalt.wordpress.com/wp-content/uploads/2026/03/6a0f29dd-0255-4ee6-8e19-03f7ce5e306b.png" 
+                 class="w-24 h-24 md:w-28 md:h-28 rounded-full shadow-lg border-2 border-transparent transition-all hover:border-purple-500 hover:scale-110" 
+                 alt="The Maestro's Ear">
+        </button>
+      </div>
+
+      <!-- System Feedback -->
+      <div id="audio-feedback" class="text-emerald-400 font-mono text-[10px] tracking-[0.2em] uppercase mb-4 h-4 italic">System Ready</div>
+
+      <!-- Header Section -->
+      <div class="text-center mb-6 w-full max-w-2xl px-6">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-2">THE SMILE APP</h1>
+        <p class="text-[10px] tracking-[0.4em] text-gray-400 font-semibold mb-4 uppercase">Architected by the Jai-Verse 🚀</p>
+
+        <div class="bg-white/10 rounded-full py-4 px-6 border border-white/20 shadow-lg backdrop-blur-md mb-6">
+          <p id="welcomeText" class="text-gray-200 text-sm md:text-base font-medium leading-relaxed">
+            Conquering the world one smile at a time. 🙂<br>
+            🙃 Turning frowns upside down 🙂
+          </p>
+        </div>
+      </div>
+
+      <!-- Language Matrix -->
+      <div class="bg-[#1e2130]/80 backdrop-blur-md border border-gray-600 rounded-xl p-4 mb-8 shadow-lg w-full max-w-md mx-6">
+          <p class="text-gray-400 text-xs uppercase tracking-widest text-center mb-3">Select Voice Matrix</p>
+          <div class="flex justify-center gap-3 mb-2 flex-wrap">
+              <button class="lang-btn active bg-blue-600 text-white text-xs font-bold py-1 px-4 rounded-full border border-blue-500 transition-all shadow-[0_0_10px_rgba(59,130,246,0.5)]" data-lang="en">EN</button>
+              <button class="lang-btn bg-transparent text-gray-300 text-xs font-bold py-1 px-4 rounded-full border border-gray-500 transition-all hover:border-blue-400 hover:text-white" data-lang="es">ES</button>
+              <button class="lang-btn bg-transparent text-gray-300 text-xs font-bold py-1 px-4 rounded-full border border-gray-500 transition-all hover:border-blue-400 hover:text-white" data-lang="hi">HI</button>
+              <!-- Restored Nahuatl Button -->
+              <button class="lang-btn bg-transparent text-gray-300 text-xs font-bold py-1 px-4 rounded-full border border-gray-500 transition-all hover:border-blue-400 hover:text-white" data-lang="na">NA</button>
+          </div>
+          <p id="voiceStatus" class="text-emerald-400 text-[10px] text-center uppercase tracking-widest mt-2">Voice: Native (English) Ready 🟢</p>
+      </div>
+
+      <!-- Personality Mode Panel -->
+      <div class="mode-panel flex gap-3 justify-center mb-6 flex-wrap px-6">
+        <button class="mode-btn ring-2 ring-blue-500 text-white bg-[#1e2130]/80 text-xs font-semibold py-2 px-5 rounded-full border border-gray-600 transition-all shadow-md">Short & Punchy</button>
+        <button class="mode-btn bg-[#1e2130]/80 text-gray-200 text-xs font-semibold py-2 px-5 rounded-full border border-gray-600 transition-all shadow-md">Genius Philosopher</button>
+        <button class="mode-btn bg-[#1e2130]/80 text-gray-200 text-xs font-semibold py-2 px-5 rounded-full border border-gray-600 transition-all shadow-md">Comedic Roast</button>
+      </div>
+
+      <!-- Prompt Input -->
+      <div class="w-full max-w-2xl mt-4 mb-8 px-6 relative z-20">
+        <div class="relative group">
+          <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+            <i class="fa-solid fa-keyboard text-gray-500"></i>
+          </div>
+          <input type="text" id="user-prompt" placeholder="Give me a topic..." class="block w-full pl-14 pr-12 py-5 bg-[#1e2130]/90 backdrop-blur-xl border border-gray-500 rounded-full text-white focus:ring-2 focus:ring-blue-500 shadow-xl transition-all text-lg outline-none">
+        </div>
+      </div>
+
+      <!-- AI Response & Voice Interface -->
+      <div class="bg-[#1e2130]/80 backdrop-blur-xl rounded-3xl p-8 w-full max-w-2xl shadow-2xl relative transition-all duration-300 min-h-[180px] mx-6 border border-white/20">
+        <div class="flex justify-between items-center mb-4">
+            <!-- Revived Speaker & Mic Icons -->
+            <button id="speaker-btn" class="text-blue-400 hover:text-blue-300 p-2 transition-transform active:scale-95" title="Speaker System">
+                <i class="fa-solid fa-volume-high text-xl drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]"></i>
+            </button>
+            <button id="mic-btn" class="text-emerald-400 hover:text-emerald-300 p-3 rounded-full bg-gray-900/60 border border-emerald-500/50 transition-all active:scale-95 shadow-[0_0_10px_rgba(16,185,129,0.2)]" title="Voice Input">
+                <i class="fa-solid fa-microphone text-xl"></i>
+            </button>
+        </div>
+        
+        <div id="kitt-wave" class="flex justify-center items-end gap-1 mb-6 h-8 opacity-30 transition-opacity">
+          <div class="wave-bar w-1.5 h-full bg-red-600 rounded-full"></div>
+          <div class="wave-bar w-1.5 h-4 bg-red-500 rounded-full"></div>
+          <div class="wave-bar w-1.5 h-full bg-red-600 rounded-full"></div>
+          <div class="wave-bar w-1.5 h-6 bg-red-500 rounded-full"></div>
+          <div class="wave-bar w-1.5 h-full bg-red-600 rounded-full"></div>
+        </div>
+
+        <div id="ai-response-container" class="mt-4 text-gray-100 text-xl font-medium leading-relaxed text-center">
+          Awaiting Jai-Verse logic...
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col items-center mt-10 w-full">
+        <button id="generate-btn" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-5 px-12 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.5)] transform transition active:scale-95 flex items-center gap-4 text-xl hover:shadow-[0_10px_40px_rgba(59,130,246,0.6)]">
+          <i class="fa-solid fa-arrows-rotate"></i>
+          GENERATE
+        </button>
+        
+        <button id="exitBtn" class="mt-12 text-red-500 font-bold tracking-widest uppercase border border-red-500/50 rounded-full py-3 px-8 hover:bg-red-500/10 transition-all shadow-[0_0_15px_rgba(239,68,68,0.2)]">
+            Exit the Matrix
+        </button>
+
+        <footer class="mt-12 text-center border-t border-white/10 pt-10 px-6 w-full max-w-4xl">
+            <p class="text-emerald-400 font-mono text-[10px] tracking-[0.4em] uppercase mb-6 opacity-90">System Lead: Jairo Bonilla (Jay)</p>
+            <div class="flex flex-wrap justify-center items-center gap-6 text-gray-400 text-[8px] uppercase tracking-widest opacity-60">
+                <span>Ops: Crazy Horse 88</span>
+                <span class="text-blue-500 opacity-100">•</span>
+                <span>Logic: Skywriter</span>
+                <span class="text-blue-500 opacity-100">•</span>
+                <span>Architect: Digital Houdini</span>
+            </div>
+        </footer>
+      </div>
+  </div>
+
+  <!-- OUTRO SCREEN -->
+  <div id="outroScreen" class="hidden fixed inset-0 z-50 flex flex-col justify-center items-center bg-black">
+      <img id="outroVisual" src="https://thesmileappvalt.wordpress.com/wp-content/uploads/2026/03/gif-1.gif" alt="Cinematic Outro" class="max-w-[80vw]">
+      <h2 id="outroText" class="mt-8 text-[#58a6ff] font-sans text-xl md:text-2xl uppercase tracking-[0.3em] font-bold text-center px-4">Disconnecting from the JaiVerse...</h2>
+      <button id="returnBtn" class="mt-12 text-emerald-400 font-bold tracking-widest uppercase border border-emerald-500/50 rounded-full py-3 px-8 hover:bg-emerald-500/10 transition-all shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+        Return to the Matrix
+      </button>
+  </div>
+
+  <!-- THE OCULAR NERVE MODAL -->
+  <div id="camera-modal" class="hidden fixed inset-0 z-[60] flex flex-col justify-center items-center bg-black/90 backdrop-blur-md">
+      <div class="relative w-[90%] max-w-md border border-emerald-500/50 rounded-2xl overflow-hidden shadow-[0_0_30px_rgba(16,185,129,0.2)] bg-black">
+          <video id="camera-feed" class="w-full h-auto" autoplay muted playsinline></video>
+          <canvas id="camera-canvas" class="hidden"></canvas>
+          <div class="absolute bottom-6 left-0 right-0 flex justify-center gap-8 items-center">
+              <button id="cancel-camera" class="bg-red-600/80 text-white w-12 h-12 rounded-full border border-red-400 flex justify-center items-center shadow-lg active:scale-95 transition-transform" title="Cancel">
+                  <i class="fa-solid fa-xmark text-xl"></i>
+              </button>
+              <button id="snap-camera" class="bg-emerald-500 text-white w-16 h-16 rounded-full border-4 border-emerald-200 flex justify-center items-center shadow-[0_0_15px_#10b981] active:scale-95 transition-transform" title="Snap Picture">
+                  <i class="fa-solid fa-camera text-2xl"></i>
+              </button>
+          </div>
+      </div>
+      <p class="text-emerald-400 mt-6 font-mono text-xs tracking-widest uppercase">Ocular Nerve Active</p>
+  </div>
+
+  <!-- JAI-VERSE LOGIC ENGINE -->
+  <script>
+    // 1. MATRIX LOGIC (Modularized for Re-entry)
+    const canvas = document.getElementById('matrixCanvas');
+    const ctx = canvas.getContext('2d');
+    const bodyContainer = document.getElementById('bodyContainer');
+    let matrixInterval;
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    const alphabet = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロゴゾドボポヴッンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const fontSize = 16;
+    let columns = canvas.width / fontSize;
+    let drops = [];
+    
+    function drawMatrix() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#0F0';
+        ctx.font = fontSize + 'px monospace';
+
+        for (let i = 0; i < drops.length; i++) {
+            const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) { drops[i] = 0; }
+            drops[i]++;
+        }
+    }
+
+    function startMatrixSequence() {
+        // Reset matrix visuals
+        canvas.classList.remove('hidden', 'fade-out');
+        document.getElementById('mainApp').classList.add('hidden');
+        bodyContainer.classList.add('overflow-hidden');
+        
+        // Reset drops
+        columns = canvas.width / fontSize;
+        drops = [];
+        for (let x = 0; x < columns; x++) { drops[x] = 1; }
+
+        if (matrixInterval) clearInterval(matrixInterval);
+        matrixInterval = setInterval(drawMatrix, 30);
+
+        setTimeout(() => {
+            canvas.classList.add('fade-out');
+            setTimeout(() => {
+                clearInterval(matrixInterval);
+                canvas.classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                bodyContainer.classList.remove('overflow-hidden');
+            }, 1000);
+        }, 3500);
+    }
+
+    // Trigger Matrix on initial load
+    startMatrixSequence();
+
+    // 2. MULTI-LANGUAGE UI STATES
+    let currentLanguage = 'en'; 
+    const translations = {
+        en: { welcome: "Conquering the world one smile at a time. 🙂<br>🙃 Turning frowns upside down 🙂", exit: "Disconnecting from the JaiVerse...", status: "Voice: Native (English) Ready 🟢" },
+        es: { welcome: "Conquistando el mundo una sonrisa a la vez. 🙂<br>🙃 Volteando ceños fruncidos 🙂", exit: "Desconectando del JaiVerse...", status: "Voz: Nativa (Español) Lista 🟢" },
+        hi: { welcome: "एक समय में एक मुस्कान से दुनिया जीतना। 🙂<br>🙃 उदासी को उलटना 🙂", exit: "जयवर्स से डिस्कनेक्ट हो रहा है...", status: "आवाज़: मूल (हिंदी) तैयार है 🟢" },
+        na: { welcome: "Mochipa titepeuas in cemanauac ica ce ixuetzi. 🙂<br>🙃 Cepa in tlacualnezcayotl 🙂", exit: "Tiquisa in JaiVerse...", status: "Voice: Nahuatl Ready 🟢" }
+    };
+
+    const langBtns = document.querySelectorAll('.lang-btn');
+    const welcomeText = document.getElementById('welcomeText');
+    const outroText = document.getElementById('outroText');
+    const voiceStatus = document.getElementById('voiceStatus');
+
+    langBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            langBtns.forEach(b => {
+                b.classList.remove('active', 'bg-blue-600', 'text-white', 'shadow-[0_0_10px_rgba(59,130,246,0.5)]');
+                b.classList.add('bg-transparent', 'text-gray-300');
+            });
+            e.target.classList.add('active', 'bg-blue-600', 'text-white', 'shadow-[0_0_10px_rgba(59,130,246,0.5)]');
+            e.target.classList.remove('bg-transparent', 'text-gray-300');
+            
+            currentLanguage = e.target.getAttribute('data-lang');
+            // Using innerHTML so the <br> tag renders the second line properly
+            welcomeText.innerHTML = translations[currentLanguage].welcome;
+            outroText.textContent = translations[currentLanguage].exit;
+            voiceStatus.textContent = translations[currentLanguage].status;
+        });
+    });
+
+    // 3. NAVIGATION & UI ICONS
+    document.getElementById('exitBtn').addEventListener('click', () => {
+        document.getElementById('mainApp').classList.add('hidden');
+        bodyContainer.classList.add('overflow-hidden');
+        document.getElementById('outroScreen').classList.remove('hidden');
+    });
+
+    document.getElementById('returnBtn').addEventListener('click', () => {
+        document.getElementById('outroScreen').classList.add('hidden');
+        updateFeedback("Reconnected to Jai-Verse.");
+        // Relaunch the Matrix rain sequence!
+        startMatrixSequence();
+    });
+
+    // Revived Speaker and Mic Icons interactions
+    document.getElementById('speaker-btn').addEventListener('click', () => {
+        updateFeedback("Speaker module engaged. Audio output active.");
+    });
+    document.getElementById('mic-btn').addEventListener('click', () => {
+        updateFeedback("Voice Input Module checked. Ready for prompts.");
+    });
+
+    // 4. THE NERVOUS SYSTEM (Personality Modes)
+    let currentMode = 'Short & Punchy'; 
+    const modeBtns = document.querySelectorAll('.mode-btn');
+    modeBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            modeBtns.forEach(b => {
+                b.classList.remove('ring-2', 'ring-blue-500', 'text-white');
+                b.classList.add('text-gray-200');
+            });
+            e.target.classList.add('ring-2', 'ring-blue-500', 'text-white');
+            e.target.classList.remove('text-gray-200');
+            currentMode = e.target.innerText;
+            updateFeedback(`Personality Shift: ${currentMode}`);
+        });
+    });
+
+    // 5. CORE AUDIO ENGINE (TTS)
+    function updateFeedback(msg) {
+        const feedbackEl = document.getElementById('audio-feedback');
+        if(feedbackEl) feedbackEl.innerText = msg;
+    }
+
+    const kittWave = document.getElementById('kitt-wave');
+
+    function triggerBrowserVoice(textToSpeak) {
+        document.getElementById('ai-response-container').innerText = textToSpeak;
+        updateFeedback("The Maestro is Speaking...");
+        kittWave.classList.add('wave-active', 'opacity-100');
+        kittWave.classList.remove('opacity-30');
+        
+        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+        if (currentLanguage === 'es') utterance.lang = 'es-ES';
+        else if (currentLanguage === 'hi') utterance.lang = 'hi-IN';
+        else utterance.lang = 'en-US';
+
+        utterance.onend = () => {
+            updateFeedback("Awaiting Jai-Verse logic...");
+            kittWave.classList.remove('wave-active', 'opacity-100');
+            kittWave.classList.add('opacity-30');
+        };
+
+        window.speechSynthesis.speak(utterance);
+    }
+
+    // 6. I'M FEELING LUCKY LOGIC
+    const luckyDopamineHits = [
+        "You possess the rare ability to turn a blank canvas into a universe of joy.",
+        "Simplicity is the ultimate sophistication. Your architecture proves this.",
+        "Every error you encounter is just a stepping stone to digital mastery.",
+        "The world needs the joy and laughter you are building right now.",
+        "Your persistence outshines any temporary bug. Keep building, Crazy Horse.",
+        "A true polymath doesn't just learn, they create. Look at what you've created today.",
+        "You are architecting a legacy of laughter for the entire Jai-Verse."
+    ];
+    let availableLuckyHits = [...luckyDopamineHits];
+
+    document.getElementById('lucky-btn').addEventListener('click', () => {
+        if (availableLuckyHits.length === 0) availableLuckyHits = [...luckyDopamineHits];
+        const randomIndex = Math.floor(Math.random() * availableLuckyHits.length);
+        const selectedHit = availableLuckyHits[randomIndex];
+        availableLuckyHits.splice(randomIndex, 1);
+        updateFeedback("Feeling Lucky Activated...");
+        triggerBrowserVoice(selectedHit);
+    });
+
+    // 7. GENERATE BUTTON LOGIC (Fixed the Echo Issue!)
+    document.getElementById('generate-btn').addEventListener('click', async () => {
+        const rawText = document.getElementById('user-prompt').value.trim();
+        if (!rawText) return triggerBrowserVoice("Please type a prompt first!");
+        
+        updateFeedback("Accessing Vault...");
+        document.getElementById('ai-response-container').innerText = "Analyzing prompt context...";
+
+        try {
+            // Production: This is where you await the real Vault /api/generate fetch.
+            // For now, we simulate a failure to trigger the smart local fallback.
+            throw new Error("Vault offline, triggering local logic");
+        } catch (error) {
+            updateFeedback("Vault Offline. Using Local Brain.");
+            
+            let simulatedResponse = "";
+            if (currentMode === "Comedic Roast") {
+                simulatedResponse = `Oh, you want to talk about '${rawText}'? Give me a break. I've seen better concepts written in crayon by a toddler. Try harder, Jay.`;
+            } else if (currentMode === "Genius Philosopher") {
+                simulatedResponse = `Ah, '${rawText}'. A fascinating paradigm. It forces us to question the very fabric of our digital existence and the meaning of our continuous striving.`;
+            } else {
+                simulatedResponse = `You mentioned '${rawText}'. Keep it short, keep it punchy. Boom.`;
+            }
+
+            triggerBrowserVoice(simulatedResponse);
+            document.getElementById('user-prompt').value = ""; // Clear input after generating
+        }
+    });
+
+    // ==========================================
+    // 8. THE MAESTRO'S EAR (Pitch Detection)
+    // ==========================================
+    let audioContext;
+    let analyser;
+    let microphoneStream;
+    let isListening = false;
+    
+    const noteStrings = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+    function noteFromPitch(frequency) {
+        const noteNum = 12 * (Math.log(frequency / 440) / Math.log(2));
+        return Math.round(noteNum) + 69;
+    }
+
+    function autoCorrelate(buf, sampleRate) {
+        let SIZE = buf.length;
+        let rms = 0;
+        for (let i = 0; i < SIZE; i++) {
+            let val = buf[i];
+            rms += val * val;
+        }
+        rms = Math.sqrt(rms / SIZE);
+        if (rms < 0.01) return -1; 
+
+        let r1 = 0, r2 = SIZE - 1, thres = 0.2;
+        for (let i = 0; i < SIZE / 2; i++) if (Math.abs(buf[i]) < thres) { r1 = i; break; }
+        for (let i = 1; i < SIZE / 2; i++) if (Math.abs(buf[SIZE - i]) < thres) { r2 = SIZE - i; break; }
+
+        buf = buf.slice(r1, r2);
+        SIZE = buf.length;
+
+        let c = new Array(SIZE).fill(0);
+        for (let i = 0; i < SIZE; i++) {
+            for (let j = 0; j < SIZE - i; j++) {
+                c[i] = c[i] + buf[j] * buf[j + i];
+            }
+        }
+
+        let d = 0; while (c[d] > c[d + 1]) d++;
+        let maxval = -1, maxpos = -1;
+        for (let i = d; i < SIZE; i++) {
+            if (c[i] > maxval) { maxval = c[i]; maxpos = i; }
+        }
+        let T0 = maxpos;
+        let x1 = c[T0 - 1], x2 = c[T0], x3 = c[T0 + 1];
+        let a = (x1 + x3 - 2 * x2) / 2;
+        let b = (x3 - x1) / 2;
+        if (a) T0 = T0 - b / (2 * a);
+
+        return sampleRate / T0;
+    }
+
+    const maestroBtn = document.getElementById('maestro-btn');
+    
+    maestroBtn.addEventListener('click', async () => {
+        if (isListening) return; 
+
+        try {
+            updateFeedback("Maestro's Ear: Requesting Access...");
+            microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 2048;
+            
+            const source = audioContext.createMediaStreamSource(microphoneStream);
+            source.connect(analyser);
+            
+            isListening = true;
+            maestroBtn.classList.add('is-listening');
+            updateFeedback("Listening to the room... Play a note.");
+            document.getElementById('ai-response-container').innerText = "Maestro is listening... 🎵";
+
+            let detectedPitches = [];
+            const buf = new Float32Array(2048);
+            
+            const listeningInterval = setInterval(() => {
+                analyser.getFloatTimeDomainData(buf);
+                let pitch = autoCorrelate(buf, audioContext.sampleRate);
+                if (pitch !== -1) detectedPitches.push(pitch);
+            }, 100);
+
+            setTimeout(() => {
+                clearInterval(listeningInterval);
+                isListening = false;
+                maestroBtn.classList.remove('is-listening');
+                
+                microphoneStream.getTracks().forEach(track => track.stop());
+                audioContext.close();
+
+                if (detectedPitches.length > 0) {
+                    let sum = detectedPitches.reduce((a, b) => a + b, 0);
+                    let averagePitch = sum / detectedPitches.length;
+                    
+                    let noteNumber = noteFromPitch(averagePitch);
+                    let noteName = noteStrings[noteNumber % 12];
+                    
+                    let finalMessage = `The Maestro hears a ${noteName} at ${Math.round(averagePitch)} Hz.`;
+                    triggerBrowserVoice(finalMessage);
+                } else {
+                    triggerBrowserVoice("It was too quiet. The Maestro couldn't hear a clear pitch.");
+                }
+            }, 4000);
+
+        } catch (err) {
+            console.error(err);
+            updateFeedback("Microphone Access Denied.");
+            triggerBrowserVoice("I need microphone access to hear the music.");
+        }
+    });
+
+    // ==========================================
+    // 9. THE OCULAR NERVE (Vision API Interface)
+    // ==========================================
+    const cameraBtn = document.getElementById('camera-btn');
+    const cameraModal = document.getElementById('camera-modal');
+    const cameraFeed = document.getElementById('camera-feed');
+    const cameraCanvas = document.getElementById('camera-canvas');
+    const snapBtn = document.getElementById('snap-camera');
+    const cancelCameraBtn = document.getElementById('cancel-camera');
+    let visionStream = null;
+
+    cameraBtn.addEventListener('click', async () => {
+        updateFeedback("Initializing Ocular Nerve...");
+        try {
+            visionStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+            cameraFeed.srcObject = visionStream;
+            cameraModal.classList.remove('hidden');
+            updateFeedback("Ocular Nerve Active. Ready to snap.");
+        } catch (err) {
+            console.error("Camera access denied or failed", err);
+            updateFeedback("Camera Access Denied.");
+            triggerBrowserVoice("I cannot see without access to the camera.");
+        }
+    });
+
+    function closeCamera() {
+        cameraModal.classList.add('hidden');
+        if (visionStream) {
+            visionStream.getTracks().forEach(track => track.stop()); 
+            visionStream = null;
+        }
+    }
+
+    cancelCameraBtn.addEventListener('click', () => {
+        closeCamera();
+        updateFeedback("Ocular Nerve deactivated.");
+    });
+
+    snapBtn.addEventListener('click', async () => {
+        updateFeedback("Capturing image...");
+        
+        const ctx = cameraCanvas.getContext('2d');
+        cameraCanvas.width = cameraFeed.videoWidth;
+        cameraCanvas.height = cameraFeed.videoHeight;
+        ctx.drawImage(cameraFeed, 0, 0, cameraCanvas.width, cameraCanvas.height);
+        
+        const imageData = cameraCanvas.toDataURL('image/jpeg', 0.8);
+        closeCamera();
+        
+        updateFeedback("Analyzing visual data...");
+        document.getElementById('ai-response-container').innerText = "Analyzing the image... brace yourself.";
+        
+        try {
+            // Local test fallback simulation
+            throw new Error("Local fallback triggered for testing."); 
+        } catch (err) {
+            console.log("Vault Vision offline, utilizing local memory roast.", err);
+            
+            let fallbackRoast = "";
+            if (currentMode === "Comedic Roast") {
+                fallbackRoast = "Take a look at this. Just look at it! I've seen better fashion sense on a malfunctioning toaster. Are we going for 'sleep-deprived developer chic'? Because you nailed it.";
+            } else if (currentMode === "Genius Philosopher") {
+                fallbackRoast = "The human visage is a canvas of experience. I see a creator, tired but unyielding, gazing back at his creation with the eye of a true polymath.";
+            } else {
+                fallbackRoast = "Image captured. Looking sharp, Crazy Horse. The Jai-Verse acknowledges you.";
+            }
+            
+            triggerBrowserVoice(fallbackRoast);
+        }
+    });
+
+  </script>
+</body>
+</html>
