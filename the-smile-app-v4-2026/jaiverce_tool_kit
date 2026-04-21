@@ -1,0 +1,84 @@
+/**
+ * ============================================================================
+ * JAI-VERSE CORE TOOLS (v1.0)
+ * Architected by Dr. Jay Bonilla & Lead Engineer (Gemini)
+ * * DESCRIPTION:
+ * This is the master toolkit extracted from the Smile App v4.2. 
+ * It provides plug-and-play native hardware access (Eyes, Ears, Voice).
+ * ============================================================================
+ */
+
+const JaiVerse = {
+
+    /** 1. THE EYES (Camera) */
+    Eyes: {
+        initialize: function(buttonId, inputId, onImageReady) {
+            const cameraBtn = document.getElementById(buttonId);
+            const cameraUpload = document.getElementById(inputId);
+            if (!cameraBtn || !cameraUpload) return;
+
+            cameraBtn.addEventListener('click', () => cameraUpload.click());
+            cameraUpload.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const base64Data = reader.result.split(',')[1];
+                    if (onImageReady) onImageReady(base64Data);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    },
+
+    /** 2. THE EARS (Microphone) */
+    Ears: {
+        recognition: null,
+        initialize: function(micButtonId, onTranscript) {
+            const micBtn = document.getElementById(micButtonId);
+            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRec) return;
+
+            this.recognition = new SpeechRec();
+            this.recognition.onresult = (e) => {
+                const transcript = e.results[0][0].transcript;
+                if (onTranscript) onTranscript(transcript);
+            };
+            if (micBtn) {
+                micBtn.addEventListener('click', () => this.recognition.start());
+            }
+        }
+    },
+
+    /** 3. THE VOICE (Local TTS & Cloud Vault) */
+    Voice: {
+        synth: window.speechSynthesis,
+        speakNative: function(text, langCode = 'en-US', onEndCallback = null) {
+            this.synth.cancel(); 
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = langCode;
+            if (onEndCallback) utterance.onend = onEndCallback;
+            this.synth.speak(utterance);
+        },
+        speakCloud: async function(text, imageBase64 = null, currentLang = 'en-US') {
+            if (!text && !imageBase64) return;
+            try {
+                const response = await fetch('/.netlify/functions/tts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text, imageBase64 })
+                });
+                if (!response.ok) throw new Error("Vault Network Response Failed");
+                const data = await response.json();
+                this.speakNative(data.text, currentLang);
+                return data.text;
+            } catch (e) {
+                this.speakNative("Vault connection failed.", currentLang);
+                return null;
+            }
+        },
+        cancel: function() {
+            this.synth.cancel();
+        }
+    }
+};
