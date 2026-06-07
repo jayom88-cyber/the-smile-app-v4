@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Digital Houdini | J&V Future Ventures</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <style>
         body {
             background-color: #0b0f19; 
@@ -15,366 +14,289 @@
             padding: 0;
             overflow-x: hidden;
         }
-
-        .portal-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 1.25rem;
-            margin-bottom: 1rem;
-            border-radius: 1rem;
-            background-color: #1e293b;
-            font-weight: 600;
-            letter-spacing: 0.05em;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid #334155;
-            text-decoration: none;
-            color: #e2e8f0;
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
-
-        .portal-btn:hover {
-            transform: translateY(-3px);
-            background-color: #2dd4bf;
-            color: #0b0f19;
-            box-shadow: 0 10px 15px -3px rgba(45, 212, 191, 0.3);
+        .ferrari-glow {
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
         }
-
-        .free-tier-btn {
-            border: 1px solid #3b82f6;
-            background-color: rgba(59, 130, 246, 0.1);
-            color: #60a5fa;
+        ::-webkit-scrollbar {
+            width: 6px;
         }
-        .free-tier-btn:hover { background-color: #3b82f6; color: white; }
-
-        .vault-btn {
-            background: linear-gradient(135deg, #4c1d95 0%, #9333ea 100%);
-            border: 2px solid #fbbf24;
-            color: #fde68a;
-            box-shadow: 0 4px 20px rgba(147, 51, 234, 0.4);
+        ::-webkit-scrollbar-track {
+            background: #0b0f19;
         }
-
-        .vault-btn:hover {
-            background: linear-gradient(135deg, #5b21b6 0%, #a855f7 100%);
-            color: #fff;
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 25px rgba(251, 191, 36, 0.5);
-        }
-
-        .rd-sandbox {
-            background: linear-gradient(to bottom, #0f172a, #020617);
-            border: 1px solid #fbbf24;
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.1);
-        }
-
-        /* Media Player Controls styling */
-        .media-btn {
-            background-color: #1e293b;
-            border: 1px solid #334155;
-            color: #e2e8f0;
-            transition: all 0.2s;
-        }
-        .media-btn:hover { background-color: #334155; transform: scale(1.05); }
-        .media-btn:active { transform: scale(0.95); }
-        .media-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-        
-        /* Smooth scrolling for the active chunk list */
-        #chunk-list {
-            scroll-behavior: smooth;
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center py-10 px-4">
+<body class="min-h-screen flex flex-col justify-between antialiased">
 
-    <main class="w-full max-w-md w-full">
-        
-        <header class="flex flex-col items-center mb-8">
-            <div class="w-24 h-24 rounded-full bg-slate-800 border-2 border-amber-400 overflow-hidden mb-4 shadow-xl flex items-center justify-center">
-                <span class="text-2xl font-bold tracking-widest text-amber-300">J&V</span>
-            </div>
-            <h1 class="text-2xl font-bold tracking-wide mb-1 text-white">Jairo Bonilla</h1>
-            <h2 class="text-amber-400 text-sm font-medium mb-2 uppercase tracking-widest">The Digital Houdini</h2>
-        </header>
-
-        <section class="flex flex-col w-full space-y-2 mb-8">
-            
-            <!-- FREE TIER -->
-            <a href="#" class="portal-btn free-tier-btn flex flex-col">
-                <span class="text-xs font-bold tracking-widest mb-1">FREE TIER</span>
-                <span class="text-base">😊 The Smile App (v3.0)</span>
-            </a>
-
-            <!-- THE VAULT (PREMIUM TIER) -->
-            <div class="mt-6 border-t border-slate-700 pt-6">
-                <div class="text-center mb-4">
-                    <span class="text-amber-400 text-xs font-bold tracking-widest uppercase">The Vault (Premium Access)</span>
+    <header class="w-full max-w-4xl mx-auto px-4 pt-6">
+        <div class="glass-panel rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="h-3 w-3 rounded-full bg-red-500 animate-pulse"></div>
+                <div>
+                    <h1 class="text-sm font-bold uppercase tracking-widest text-slate-200">The Digital Houdini</h1>
+                    <p class="text-xs text-slate-400">J&V FUTURE VENTURES • CUSTOM TTS ENGINE</p>
                 </div>
-                
-                <!-- Premium Item 1 -->
-                <a href="#" class="portal-btn vault-btn flex flex-col mb-3">
-                    <span class="text-lg">🩹 The Curi Band-Aid App</span>
-                    <span class="text-xs font-normal opacity-80 mt-1">Advanced Logic & Empathy Matrix</span>
-                </a>
-                
-                <!-- Premium Item 2 -->
-                <a href="#" class="portal-btn vault-btn flex flex-col">
-                    <span class="text-lg">🔊 J&V TTS Chunking Engine</span>
-                    <span class="text-xs font-normal opacity-80 mt-1">Bypass Limits & Audio Sync</span>
-                </a>
             </div>
-        </section>
+            <div class="flex items-center gap-2">
+                <span class="text-[10px] bg-slate-800 text-slate-400 font-mono px-2 py-1 rounded border border-slate-700">v1.2-LIVE</span>
+                <span id="system-status" class="text-xs font-mono font-bold uppercase tracking-wider text-slate-400">System Idle</span>
+            </div>
+        </div>
+    </header>
 
-        <!-- ========================================================= -->
-        <!-- PREMIUM J&V TTS ENGINE WITH MEDIA CONTROLS                -->
-        <!-- ========================================================= -->
-        <section class="w-full p-6 rd-sandbox rounded-2xl shadow-2xl mt-4 relative">
-            <div class="absolute -top-3 left-6 bg-slate-900 text-amber-400 px-3 py-1 text-xs font-bold uppercase rounded-full border border-amber-400 flex items-center gap-2">
-                <span>🗝️ Vault Premium Tool</span>
-            </div>
+    <main class="flex-grow flex items-center justify-center p-4">
+        <div class="w-full max-w-4xl glass-panel ferrari-glow rounded-3xl p-6 sm:p-8 space-y-6">
             
-            <h3 class="text-xl font-bold mb-1 mt-2 text-white">TTS Chunking Engine</h3>
-            <p class="text-xs text-slate-400 mb-4">Select Voice, Paste Text, and use the Media Controls to navigate your WordPress docs.</p>
-            
-            <div class="mb-3">
-                <select id="voice-select" class="w-full bg-slate-800 border border-slate-600 text-slate-200 text-sm rounded focus:ring-amber-500 focus:border-amber-500 block p-2">
-                    <option value="">Loading premium voices...</option>
-                </select>
-            </div>
-
-            <textarea id="tts-input" class="w-full bg-slate-900 border border-slate-600 rounded p-3 text-sm text-slate-200 mb-3 h-24 focus:outline-none focus:border-amber-500 transition-colors" placeholder="Paste a large paragraph from your 19-page doc here..."></textarea>
-            
-            <button id="tts-play-btn" class="w-full bg-amber-600 hover:bg-amber-500 text-black font-bold py-3 px-4 rounded-lg transition-colors shadow-lg mb-4">
-                ▶️ Load & Start Engine
-            </button>
-
-            <!-- MEDIA CONTROLS (Hidden until playing) -->
-            <div id="media-controls" class="flex items-center justify-between bg-slate-900 p-3 rounded-lg border border-slate-700 mb-4 hidden">
-                <button id="btn-prev" class="media-btn w-10 h-10 rounded-full flex items-center justify-center text-lg" title="Previous Sentence">⏮</button>
-                <button id="btn-pause-resume" class="media-btn w-12 h-12 rounded-full flex items-center justify-center text-xl" title="Pause / Resume">⏸</button>
-                <button id="btn-next" class="media-btn w-10 h-10 rounded-full flex items-center justify-center text-lg" title="Next Sentence">⏭</button>
-                <button id="btn-stop" class="media-btn w-10 h-10 rounded-full flex items-center justify-center text-red-400 text-lg ml-4" title="Stop completely">⏹</button>
-            </div>
-
-            <div class="p-3 bg-slate-900 rounded-lg border border-slate-800">
-                <div class="text-xs font-mono mb-2 border-b border-slate-700 pb-2 flex justify-between">
-                    <span class="text-slate-500">Status: <span id="tts-status" class="text-amber-400 font-bold">Idle</span></span>
-                    <span class="text-slate-500">Chunk: <span id="chunk-counter" class="text-white">0/0</span></span>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Active Voice Matrix</label>
+                    <select id="voice-selection" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-red-500 transition-colors">
+                        <option value="">Loading Hardware Voices...</option>
+                    </select>
                 </div>
-                <ul id="chunk-list" class="text-xs text-slate-400 font-mono space-y-2 max-h-48 overflow-y-auto pr-2 pb-4">
-                </ul>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Engine Controller Panel</label>
+                    <div class="grid grid-cols-5 gap-2">
+                        <button id="btn-prev" class="bg-slate-800 hover:bg-slate-700 text-slate-200 py-3 rounded-xl font-bold transition-all transform active:scale-95 border border-slate-700">⏮</button>
+                        <button id="btn-stop" class="bg-slate-800 hover:bg-red-950/40 text-red-400 py-3 rounded-xl font-bold transition-all transform active:scale-95 border border-slate-700 hover:border-red-900">⏹</button>
+                        <button id="btn-start" class="col-span-2 bg-red-600 hover:bg-red-500 text-white py-3 rounded-xl font-bold uppercase tracking-wider text-sm transition-all transform active:scale-95 shadow-lg shadow-red-600/20">Execute</button>
+                        <button id="btn-next" class="bg-slate-800 hover:bg-slate-700 text-slate-200 py-3 rounded-xl font-bold transition-all transform active:scale-95 border border-slate-700">⏭</button>
+                    </div>
+                </div>
             </div>
-        </section>
 
+            <div class="flex justify-end">
+                <button id="btn-pause-resume" class="hidden text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono font-bold uppercase px-4 py-2 rounded-lg border border-slate-700 transition-all">⏸ Pause</button>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Vocal Manifestation Repository</label>
+                <textarea id="raw-text-input" class="w-full h-48 bg-slate-950 border border-slate-800 rounded-2xl p-4 text-sm font-mono leading-relaxed text-slate-300 focus:outline-none focus:border-red-500/50 transition-colors resize-none" placeholder="Inject text infrastructure here to break down and manifest locally..."></textarea>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Engine Chunk Orchestrator</label>
+                <div class="w-full h-40 bg-slate-950 border border-slate-800 rounded-2xl p-4 overflow-y-auto">
+                    <ul id="chunk-list-display" class="space-y-2 font-mono text-xs text-slate-500">
+                        <li class="italic text-slate-600">> System stands ready. Provide text to initialize parsing array...</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
     </main>
 
+    <footer class="w-full max-w-4xl mx-auto px-4 pb-6 text-center">
+        <p class="text-[10px] text-slate-600 font-mono uppercase tracking-widest">Jai-Verse Digital Ecosystem • Secure Data Vault Infrastructure</p>
+    </footer>
+
     <script>
+        // Native Hardware Integration Layer
+        const JaiVerse = {
+            Voice: {
+                synth: window.speechSynthesis,
+                speakNative: function(text, voice, onEndCallback = null) {
+                    this.synth.cancel(); 
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    if (voice) utterance.voice = voice;
+                    if (onEndCallback) utterance.onend = onEndCallback;
+                    this.synth.speak(utterance);
+                },
+                cancel: function() {
+                    this.synth.cancel();
+                }
+            }
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
-            // DOM Elements
-            const textInput = document.getElementById('tts-input');
-            const loadStartBtn = document.getElementById('tts-play-btn');
-            const statusDisplay = document.getElementById('tts-status');
-            const chunkListDisplay = document.getElementById('chunk-list');
-            const voiceSelect = document.getElementById('voice-select');
-            const chunkCounter = document.getElementById('chunk-counter');
+            // UI Element Handles
+            const voiceSelection = document.getElementById('voice-selection');
+            const statusDisplay = document.getElementById('system-status');
+            const rawTextInput = document.getElementById('raw-text-input');
+            const chunkListDisplay = document.getElementById('chunk-list-display');
             
-            // Media Control Elements
-            const mediaControlsPanel = document.getElementById('media-controls');
-            const btnPrev = document.getElementById('btn-prev');
+            const btnStart = document.getElementById('btn-start');
+            const btnStop = document.getElementById('btn-stop');
             const btnPauseResume = document.getElementById('btn-pause-resume');
             const btnNext = document.getElementById('btn-next');
-            const btnStop = document.getElementById('btn-stop');
+            const btnPrev = document.getElementById('btn-prev');
 
-            // Global State Variables for the Engine
-            let voices = [];
+            // Engine Tracking Matrices
             let globalChunks = [];
             let currentChunkIndex = 0;
-            let isPlaying = false;
             let isPaused = false;
-            let intentionalSkip = false; // Flag to prevent auto-advancing when we manually cancel audio
+            let isRunning = false;
+            let intentionalSkip = false;
+            let hardwareVoices = [];
 
-            // --- 1. VOICE POPULATION ---
-            function populateVoiceList() {
-                voices = window.speechSynthesis.getVoices();
-                voiceSelect.innerHTML = ''; 
-                if (voices.length === 0) {
-                    voiceSelect.innerHTML = '<option>No voices available</option>';
-                    return;
-                }
-                voices.forEach((voice, index) => {
+            // Populate Audio Drivers
+            function populateVoiceMatrix() {
+                hardwareVoices = JaiVerse.Voice.synth.getVoices();
+                if (hardwareVoices.length === 0) return;
+                
+                voiceSelection.innerHTML = '';
+                hardwareVoices.forEach((voice, index) => {
                     const option = document.createElement('option');
-                    option.textContent = `${voice.name} (${voice.lang})`;
                     option.value = index;
-                    if (voice.name.includes('Google') || voice.name.includes('Zira') || voice.name.includes('Samantha')) {
-                         option.selected = true;
-                    }
-                    voiceSelect.appendChild(option);
+                    option.textContent = `${voice.name} (${voice.lang})`;
+                    if (voice.default) option.selected = true;
+                    voiceSelection.appendChild(option);
                 });
             }
-            populateVoiceList();
-            if (speechSynthesis.onvoiceschanged !== undefined) {
-                speechSynthesis.onvoiceschanged = populateVoiceList;
+
+            populateVoiceMatrix();
+            if (undefined !== window.speechSynthesis.onvoiceschanged) {
+                window.speechSynthesis.onvoiceschanged = populateVoiceMatrix;
             }
 
-            // --- 2. TEXT SPLITTER ---
+            // Text Parsing Pipeline
             function breakTextIntoChunks(text) {
-                const regex = /[^.!?;\n]+[.!?;\n]+/g;
-                const chunks = text.match(regex);
-                if (!chunks) return [text.trim()].filter(Boolean);
-                return chunks.map(chunk => chunk.trim()).filter(chunk => chunk.length > 0);
+                if (!text.trim()) return [];
+                // Regular Expression mapping complete structural boundaries
+                return text.match(/[^.!?]+[.!?]+/g) || [text];
             }
 
-            // --- 3. UI UPDATER ---
-            function updateUIForCurrentChunk() {
-                chunkCounter.innerText = `${currentChunkIndex + 1}/${globalChunks.length}`;
-                
-                // Reset all items
-                const allItems = chunkListDisplay.querySelectorAll('li');
-                allItems.forEach(li => {
-                    li.className = "text-slate-500";
-                    li.innerText = li.innerText.replace('[🔊]', '').replace('[✅]', '').trim();
-                });
-
-                // Highlight active item
-                const activeLi = document.getElementById(`chunk-item-${currentChunkIndex}`);
-                if (activeLi) {
-                    activeLi.innerText = `[🔊] ${globalChunks[currentChunkIndex]}`;
-                    activeLi.className = "text-amber-300 bg-slate-800 p-2 rounded border border-amber-900";
-                    // Auto-scroll to active chunk
-                    activeLi.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }
-
-                // Mark previous items as done
-                for (let i = 0; i < currentChunkIndex; i++) {
-                    const pastLi = document.getElementById(`chunk-item-${i}`);
-                    if (pastLi) {
-                        pastLi.innerText = `[✅] ${globalChunks[i]}`;
-                        pastLi.className = "text-slate-600 line-through opacity-50";
-                    }
-                }
-            }
-
-            // --- 4. THE CORE AUDIO PLAYER ---
+            // Audio Core Iteration Engine
             function playCurrentChunk() {
-                if (currentChunkIndex >= globalChunks.length) {
+                if (!isRunning || currentChunkIndex >= globalChunks.length || currentChunkIndex < 0) {
                     stopEngine();
-                    statusDisplay.innerText = "Completed!";
-                    statusDisplay.className = "text-emerald-400 font-bold";
                     return;
                 }
 
-                updateUIForCurrentChunk();
-                const textChunk = globalChunks[currentChunkIndex];
-                const utterance = new SpeechSynthesisUtterance(textChunk);
-                
-                const selectedVoiceIndex = voiceSelect.value;
-                if (voices.length > 0 && selectedVoiceIndex !== "") {
-                    utterance.voice = voices[selectedVoiceIndex];
-                }
-                
-                utterance.onend = () => {
-                    // If we didn't manually skip/stop, move to the next chunk naturally
-                    if (!intentionalSkip && isPlaying) {
+                intentionalSkip = false;
+                updateVisualInterface();
+
+                const textToSpeak = globalChunks[currentChunkIndex].trim();
+                const selectedVoice = hardwareVoices[voiceSelection.value] || null;
+
+                statusDisplay.innerText = `[CHUNK ${currentChunkIndex + 1}/${globalChunks.length}] PLAYING`;
+                statusDisplay.className = "text-red-400 font-mono font-bold uppercase tracking-wider";
+
+                JaiVerse.Voice.speakNative(textToSpeak, selectedVoice, () => {
+                    if (!intentionalSkip && isRunning) {
                         currentChunkIndex++;
-                        playCurrentChunk();
+                        if (currentChunkIndex < globalChunks.length) {
+                            playCurrentChunk();
+                        } else {
+                            stopEngine();
+                        }
                     }
-                };
-
-                utterance.onerror = (e) => {
-                    if(!intentionalSkip) console.warn("Chunk error:", e);
-                };
-
-                intentionalSkip = false; // Reset flag before speaking
-                window.speechSynthesis.speak(utterance);
+                });
             }
 
-            // --- 5. MEDIA CONTROLS LOGIC ---
-            function startEngine() {
-                const rawText = textInput.value;
-                if (!rawText.trim()) return;
-
-                // Stop anything currently happening
-                window.speechSynthesis.cancel();
-                
-                globalChunks = breakTextIntoChunks(rawText);
-                currentChunkIndex = 0;
-                isPlaying = true;
-                isPaused = false;
-                btnPauseResume.innerText = "⏸";
-
-                // Setup UI List
+            function updateVisualInterface() {
                 chunkListDisplay.innerHTML = '';
                 globalChunks.forEach((chunk, index) => {
                     const li = document.createElement('li');
                     li.id = `chunk-item-${index}`;
-                    li.innerText = `${chunk}`;
-                    li.className = "text-slate-500";
+                    
+                    if (index < currentChunkIndex) {
+                        li.innerText = `✓ CHUNK ${index + 1}: ${chunk.substring(0, 30)}... [CLEARED]`;
+                        li.className = "text-slate-700 line-through pl-2";
+                    } else if (index === currentChunkIndex) {
+                        li.innerText = `⚡ CHUNK ${index + 1}: ${chunk}`;
+                        li.className = "text-red-400 font-bold border-l-2 border-red-500 pl-2 bg-red-950/10 py-1 rounded-r shadow-sm";
+                    } else {
+                        li.innerText = `> CHUNK ${index + 1}: ${chunk.substring(0, 45)}... [PENDING]`;
+                        li.className = "text-slate-500 pl-2";
+                    }
                     chunkListDisplay.appendChild(li);
                 });
 
-                statusDisplay.innerText = "Playing...";
-                statusDisplay.className = "text-amber-400 font-bold";
-                
-                // Show media controls, hide load button
-                loadStartBtn.classList.add('hidden');
-                mediaControlsPanel.classList.remove('hidden');
-                mediaControlsPanel.classList.add('flex');
+                // Auto Scroll to current item
+                const activeItem = document.getElementById(`chunk-item-${currentChunkIndex}`);
+                if (activeItem) activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
 
+            // Control Implementations
+            function startEngine() {
+                const rawText = rawTextInput.value;
+                globalChunks = breakTextIntoChunks(rawText);
+
+                if (globalChunks.length === 0) {
+                    statusDisplay.innerText = "ERROR: EMPTY MANIFEST";
+                    statusDisplay.className = "text-amber-500 font-mono font-bold";
+                    return;
+                }
+
+                isRunning = true;
+                currentChunkIndex = 0;
+                isPaused = false;
+                btnPauseResume.innerText = "⏸ Pause";
+                btnPauseResume.classList.remove('hidden');
+                
                 playCurrentChunk();
             }
 
             function stopEngine() {
-                isPlaying = false;
+                isRunning = false;
                 isPaused = false;
-                intentionalSkip = true;
-                window.speechSynthesis.cancel();
+                globalChunks = [];
+                currentChunkIndex = 0;
+                JaiVerse.Voice.cancel();
                 
-                statusDisplay.innerText = "Stopped.";
-                statusDisplay.className = "text-red-400 font-bold";
-                
-                // Reset UI buttons
-                loadStartBtn.classList.remove('hidden');
-                mediaControlsPanel.classList.add('hidden');
-                mediaControlsPanel.classList.remove('flex');
+                btnPauseResume.classList.add('hidden');
+                statusDisplay.innerText = "SYSTEM IDLE";
+                statusDisplay.className = "text-slate-400 font-mono font-bold uppercase tracking-wider";
+                chunkListDisplay.innerHTML = '<li class="italic text-slate-600">> System stands ready. Provide text to initialize parsing array...</li>';
             }
 
             function togglePauseResume() {
-                if (isPaused) {
-                    window.speechSynthesis.resume();
-                    isPaused = false;
-                    btnPauseResume.innerText = "⏸";
-                    statusDisplay.innerText = "Playing...";
-                } else {
-                    window.speechSynthesis.pause();
+                if (!isRunning) return;
+
+                if (!isPaused) {
+                    JaiVerse.Voice.synth.pause();
                     isPaused = true;
-                    btnPauseResume.innerText = "▶️";
-                    statusDisplay.innerText = "Paused.";
+                    btnPauseResume.innerText = "▶️ Resume";
+                    statusDisplay.innerText = "ENGINE PAUSED";
+                    statusDisplay.className = "text-amber-400 font-mono font-bold";
+                } else {
+                    JaiVerse.Voice.synth.resume();
+                    isPaused = false;
+                    btnPauseResume.innerText = "⏸ Pause";
+                    statusDisplay.innerText = `[CHUNK ${currentChunkIndex + 1}/${globalChunks.length}] PLAYING`;
+                    statusDisplay.className = "text-red-400 font-mono font-bold";
                 }
             }
 
             function skipNext() {
-                if (currentChunkIndex < globalChunks.length - 1) {
-                    intentionalSkip = true; // Tell the onend event not to auto-fire
-                    window.speechSynthesis.cancel(); // Stops current audio
-                    currentChunkIndex++;
-                    
-                    if(isPaused) { isPaused = false; btnPauseResume.innerText = "⏸"; }
-                    setTimeout(() => playCurrentChunk(), 50); // Small delay allows engine to reset
-                }
-            }
-
-            function skipPrev() {
-                if (currentChunkIndex > 0) {
+                if (isRunning && currentChunkIndex < globalChunks.length - 1) {
                     intentionalSkip = true;
-                    window.speechSynthesis.cancel();
-                    currentChunkIndex--;
-                    
-                    if(isPaused) { isPaused = false; btnPauseResume.innerText = "⏸"; }
+                    JaiVerse.Voice.cancel();
+                    currentChunkIndex++;
+                    if (isPaused) {
+                        isPaused = false;
+                        btnPauseResume.innerText = "⏸ Pause";
+                    }
                     setTimeout(() => playCurrentChunk(), 50);
                 }
             }
 
-            // --- 6. EVENT LISTENERS ---
-            loadStartBtn.addEventListener('click', startEngine);
+            function skipPrev() {
+                if (isRunning && currentChunkIndex > 0) {
+                    intentionalSkip = true;
+                    JaiVerse.Voice.cancel();
+                    currentChunkIndex--;
+                    if (isPaused) {
+                        isPaused = false;
+                        btnPauseResume.innerText = "⏸ Pause";
+                    }
+                    setTimeout(() => playCurrentChunk(), 50);
+                }
+            }
+
+            // Wire Interface Listeners
+            btnStart.addEventListener('click', startEngine);
             btnStop.addEventListener('click', stopEngine);
             btnPauseResume.addEventListener('click', togglePauseResume);
             btnNext.addEventListener('click', skipNext);
